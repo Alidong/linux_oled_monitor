@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include "cpu_data.h"
 #define ANIM_TIME 300
-#define ANIM_DELAY 100
+#define PLAYBACK_DELAY 1200
+#define REPEAT_DELAY (2 * ANIM_TIME + PLAYBACK_DELAY) * 5
 #define ANIM_Y 32
 
 static Page_maneger *local_subMenu;
@@ -129,8 +130,8 @@ static void onCreate_subMenu(Page_maneger *sub_page)
     LV_IMG_DECLARE(fdisk_image);
     lv_obj_t *img4 = lv_img_create(page);
     lv_img_set_src(img4, &fdisk_image);
-    lv_img_set_zoom(img4, 240);
-    lv_img_set_offset_y(img4, -3);
+    // lv_img_set_zoom(img4, 240);
+    lv_img_set_offset_y(img4, -2);
     lv_obj_align(img4, LV_ALIGN_OUT_LEFT_MID, -36, 0);
     lv_fdisk_status_lable = lv_label_create(page);
     lv_obj_align(lv_fdisk_status_lable, LV_ALIGN_RIGHT_MID, 36, 0);
@@ -176,10 +177,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a1,
                        lv_obj_get_x(child_1) - 36,
                        18);
-    lv_anim_set_playback_delay(&a1, 1000);
+    lv_anim_set_playback_delay(&a1, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a1, ANIM_TIME);
     lv_anim_set_repeat_count(&a1, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a1, 1600 * 5);
+    lv_anim_set_repeat_delay(&a1, REPEAT_DELAY);
 
     lv_anim_init(&a2);
     lv_anim_set_var(&a2, child_2);
@@ -189,10 +190,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a2,
                        lv_obj_get_x(child_2) + 36,
                        -18);
-    lv_anim_set_playback_delay(&a2, 1000);
+    lv_anim_set_playback_delay(&a2, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a2, ANIM_TIME);
     lv_anim_set_repeat_count(&a2, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a2, 1600 * 5);
+    lv_anim_set_repeat_delay(&a2, REPEAT_DELAY);
     /*Temp*/
     lv_obj_t *child_3 = lv_obj_get_child(page->Page_obj, 2);
     lv_anim_init(&a3);
@@ -203,10 +204,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a3,
                        lv_obj_get_x(child_3) - 36,
                        18);
-    lv_anim_set_playback_delay(&a3, 1000);
+    lv_anim_set_playback_delay(&a3, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a3, ANIM_TIME);
     lv_anim_set_repeat_count(&a3, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a3, 1600 * 5);
+    lv_anim_set_repeat_delay(&a3, REPEAT_DELAY);
 
     lv_obj_t *child_4 = lv_obj_get_child(page->Page_obj, 3);
     lv_anim_init(&a4);
@@ -217,10 +218,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a4,
                        lv_obj_get_x(child_4) + 42,
                        -12);
-    lv_anim_set_playback_delay(&a4, 1000);
+    lv_anim_set_playback_delay(&a4, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a4, ANIM_TIME);
     lv_anim_set_repeat_count(&a4, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a4, 1600 * 5);
+    lv_anim_set_repeat_delay(&a4, REPEAT_DELAY);
 
     /*Mem*/
     lv_obj_t *child_5 = lv_obj_get_child(page->Page_obj, 4);
@@ -232,10 +233,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a5,
                        lv_obj_get_x(child_5) - 36,
                        18);
-    lv_anim_set_playback_delay(&a5, 1000);
+    lv_anim_set_playback_delay(&a5, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a5, ANIM_TIME);
     lv_anim_set_repeat_count(&a5, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a5, 1600 * 5);
+    lv_anim_set_repeat_delay(&a5, REPEAT_DELAY);
 
     lv_obj_t *child_6 = lv_obj_get_child(page->Page_obj, 5);
     lv_anim_init(&a6);
@@ -246,10 +247,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a6,
                        lv_obj_get_x(child_6) + 42,
                        -12);
-    lv_anim_set_playback_delay(&a6, 1000);
+    lv_anim_set_playback_delay(&a6, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a6, ANIM_TIME);
     lv_anim_set_repeat_count(&a6, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a6, 1600 * 5);
+    lv_anim_set_repeat_delay(&a6, REPEAT_DELAY);
     /*Fdisk*/
     lv_obj_t *child_7 = lv_obj_get_child(page->Page_obj, 6);
     lv_anim_init(&a7);
@@ -260,10 +261,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a7,
                        lv_obj_get_x(child_7) - 36,
                        12);
-    lv_anim_set_playback_delay(&a7, 1000);
+    lv_anim_set_playback_delay(&a7, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a7, ANIM_TIME);
     lv_anim_set_repeat_count(&a7, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a7, 1600 * 5);
+    lv_anim_set_repeat_delay(&a7, REPEAT_DELAY);
 
     lv_obj_t *child_8 = lv_obj_get_child(page->Page_obj, 7);
     lv_anim_init(&a8);
@@ -274,10 +275,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a8,
                        lv_obj_get_x(child_8) + 72,
                        -8);
-    lv_anim_set_playback_delay(&a8, 1000);
+    lv_anim_set_playback_delay(&a8, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a8, ANIM_TIME);
     lv_anim_set_repeat_count(&a8, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a8, 1600 * 5);
+    lv_anim_set_repeat_delay(&a8, REPEAT_DELAY);
     /*IP status*/
     lv_obj_t *child_9 = lv_obj_get_child(page->Page_obj, 8);
     lv_anim_init(&a9);
@@ -288,10 +289,10 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a9,
                        lv_obj_get_y(child_9) - 32,
                        0);
-    lv_anim_set_playback_delay(&a9, 1000);
+    lv_anim_set_playback_delay(&a9, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a9, ANIM_TIME);
     lv_anim_set_repeat_count(&a9, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a9, 1600 * 5);
+    lv_anim_set_repeat_delay(&a9, REPEAT_DELAY);
     /*Local time*/
     lv_obj_t *child_10 = lv_obj_get_child(page->Page_obj, 9);
     lv_anim_init(&a10);
@@ -302,22 +303,22 @@ static void onAppearing(Page_maneger *page)
     lv_anim_set_values(&a10,
                        lv_obj_get_y(child_9) + 32,
                        0);
-    lv_anim_set_playback_delay(&a10, 1000);
+    lv_anim_set_playback_delay(&a10, PLAYBACK_DELAY);
     lv_anim_set_playback_time(&a10, ANIM_TIME);
     lv_anim_set_repeat_count(&a10, LV_ANIM_REPEAT_INFINITE); /*Just for the demo*/
-    lv_anim_set_repeat_delay(&a10, 1600 * 5);
+    lv_anim_set_repeat_delay(&a10, REPEAT_DELAY);
     /* Create anim timeline */
     anim_timeline = lv_anim_timeline_create();
     lv_anim_timeline_add(anim_timeline, 0, &a1);
     lv_anim_timeline_add(anim_timeline, 0, &a2);
-    lv_anim_timeline_add(anim_timeline, 1600, &a3);
-    lv_anim_timeline_add(anim_timeline, 1600, &a4);
-    lv_anim_timeline_add(anim_timeline, 1600 * 2, &a5);
-    lv_anim_timeline_add(anim_timeline, 1600 * 2, &a6);
-    lv_anim_timeline_add(anim_timeline, 1600 * 3, &a7);
-    lv_anim_timeline_add(anim_timeline, 1600 * 3, &a8);
-    lv_anim_timeline_add(anim_timeline, 1600 * 4, &a9);
-    lv_anim_timeline_add(anim_timeline, 1600 * 5, &a10);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY), &a3);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY), &a4);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY) * 2, &a5);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY) * 2, &a6);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY) * 3, &a7);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY) * 3, &a8);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY) * 4, &a9);
+    lv_anim_timeline_add(anim_timeline, (2 * ANIM_TIME + PLAYBACK_DELAY) * 5, &a10);
     lv_anim_timeline_start(anim_timeline);
 }
 static void onDisappearing_ready_cb(lv_anim_t *a)

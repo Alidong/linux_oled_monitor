@@ -112,6 +112,7 @@ void getMem_data(MEM_OCCUPY *mem)
     sscanf(buff, "%s %ld", mem->name2, &mem->free);
     fgets(buff, sizeof(buff), fd);
     sscanf(buff, "%s %ld", mem->name3, &mem->MemAvailable);
+    fclose(fd);
 }
 void get_disk_occupy(FDISK_OCCUPY *file_status)
 {
@@ -135,6 +136,7 @@ void get_disk_occupy(FDISK_OCCUPY *file_status)
     {
         sscanf(buffer, "%s %s %s %s %s %s", file_status->fileSys, file_status->size, file_status->used, file_status->free, file_status->percent, file_status->moment);
     }
+    pclose(pipe);
     //printf("desk used:%s\n",percent);
     return;
 }
@@ -158,7 +160,7 @@ int get_local_ip(const char *eth_inf, char *dest_str)
     // if error: No such device
     if (ioctl(sd, SIOCGIFADDR, &ifr) < 0)
     {
-        strcpy(dest_str, "no ip!");
+        strcpy(dest_str, "not conneted");
         // printf("ioctl error: %s\n", strerror(errno));
         close(sd);
         return -1;
@@ -166,7 +168,7 @@ int get_local_ip(const char *eth_inf, char *dest_str)
 
     // printf("interfac: %s, ip: %s\n", eth_inf, inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
     strcpy(dest_str, inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
-
+    shutdown(sd, SHUT_RDWR);
     close(sd);
     return 0;
 }
@@ -182,6 +184,7 @@ void getTime_data(TIME_DATA *time_data)
     {
         sscanf(buffer, "%s %s %s %s %s %s", time_data->week, time_data->month, time_data->day, time_data->time, time_data->zone, time_data->year);
     }
+    pclose(pipe);
 }
 void cpu_init(void)
 {
