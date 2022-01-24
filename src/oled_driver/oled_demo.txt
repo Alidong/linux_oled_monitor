@@ -1,0 +1,206 @@
+// /*
+//  * Copyright (c) 2015, Vladimir Komendantskiy
+//  * MIT License
+//  *
+//  * SSD1306 demo of block and font drawing.
+//  */
+
+// //
+// // fixed for OrangePiZero by HypHop
+// //
+
+// #include <errno.h>
+// #include <string.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <time.h>
+// #include <stdint.h>
+// #include <sys/socket.h>
+// #include <net/if.h>
+// #include <sys/ioctl.h>
+// #include <netinet/in.h>
+// #include <net/if_arp.h>
+// #include <sys/types.h>
+// #include <arpa/inet.h>
+
+// #include "oled.h"
+// #include "font.h"
+// #include <pthread.h>
+// #include <semaphore.h>
+// #include <unistd.h>
+// typedef struct cpu_occupy_          //定义一个cpu occupy的结构体
+// {
+//     char name[20];                  //定义一个char类型的数组名name有20个元素
+//     unsigned int user;              //定义一个无符号的int类型的user
+//     unsigned int nice;              //定义一个无符号的int类型的nice
+//     unsigned int system;            //定义一个无符号的int类型的system
+//     unsigned int idle;              //定义一个无符号的int类型的idle
+//     unsigned int iowait;
+//     unsigned int irq;
+//     unsigned int softirq;
+// }cpu_occupy_t;
+// static pthread_t tid;
+//  static   double cpu_load;
+//  static float cpu_temp;
+// static char  IP[20];
+// double cal_cpuoccupy (cpu_occupy_t *o, cpu_occupy_t *n)
+// {
+//     double od, nd;
+//     double id, sd;
+//     double cpu_use ;
+ 
+//     od = (double) (o->user + o->nice + o->system +o->idle+o->softirq+o->iowait+o->irq);//第一次(用户+优先级+系统+空闲)的时间再赋给od
+//     nd = (double) (n->user + n->nice + n->system +n->idle+n->softirq+n->iowait+n->irq);//第二次(用户+优先级+系统+空闲)的时间再赋给od
+ 
+//     id = (double) (n->idle);    //用户第一次和第二次的时间之差再赋给id
+//     sd = (double) (o->idle) ;    //系统第一次和第二次的时间之差再赋给sd
+//     if((nd-od) != 0)
+//         cpu_use =100.0 - ((id-sd))/(nd-od)*100.00; //((用户+系统)乖100)除(第一次和第二次的时间差)再赋给g_cpu_used
+//     else 
+//         cpu_use = 0;
+//     return cpu_use;
+// }
+
+
+// void get_cpuoccupy (cpu_occupy_t *cpust)
+// {
+//     FILE *fd;
+//     int n;
+//     char buff[256];
+//     cpu_occupy_t *cpu_occupy;
+//     cpu_occupy=cpust;
+ 
+//     fd = fopen ("/proc/stat", "r");
+//     if(fd == NULL)
+//     {
+//             perror("fopen:");
+//             exit (0);
+//     }
+//     fgets (buff, sizeof(buff), fd);
+ 
+//     sscanf (buff, "%s %u %u %u %u %u %u %u", cpu_occupy->name, &cpu_occupy->user, &cpu_occupy->nice,&cpu_occupy->system, &cpu_occupy->idle ,&cpu_occupy->iowait,&cpu_occupy->irq,&cpu_occupy->softirq);
+ 
+//     fclose(fd);
+// }
+//  void * cpu_getinfo_thread(void * arg){
+// 	 char buf[50];
+// 	cpu_occupy_t cpu_stat1;
+//     cpu_occupy_t cpu_stat2;
+// 	FILE *fstream=NULL; 
+// 	time_t timer;
+// 	timer = time(NULL);
+// 	 while (1)
+// 	 {
+// 			get_cpuoccupy((cpu_occupy_t *)&cpu_stat1);
+// 			sleep(1);
+// 			//第二次获取cpu使用情况
+// 			get_cpuoccupy((cpu_occupy_t *)&cpu_stat2);
+// 			//计算cpu使用率
+//     		cpu_load = cal_cpuoccupy ((cpu_occupy_t *)&cpu_stat1, (cpu_occupy_t *)&cpu_stat2);
+// 			if(NULL==(fstream=popen("cat /sys/class/thermal/thermal_zone0/temp","r")))    
+// 			{   
+// 				fprintf(stderr,"execute command failed: %s",strerror(errno));    
+// 				return -1;    
+// 			} 
+// 			while(fgets(buf, sizeof(buf), fstream)!= NULL) {
+// 				 cpu_temp=(float)atoi(buf)/1000.f; 
+// 			} 
+// 			pclose(fstream);  
+// 	}
+// }
+// int oled_demo(struct display_info *disp) {
+// 	int i=0;
+// 	char buf[100];
+// 	time_t now; //实例化time_t结构
+// 	struct tm *timenow; //实例化tm结构指针
+// 	while (1)
+// 	{
+// 		sprintf(buf,"IP:%s ",IP);
+// 		GUI_ShowStr(0,0,buf,1,0);
+// 		sprintf(buf,"Cpu Load=%.2f %%",cpu_load);
+// 		GUI_ShowStr(0,8,buf,1,1);
+// 		sprintf(buf,"Cpu Temp=%.2f '",cpu_temp);
+// 		GUI_ShowStr(0,16,buf,1,1);
+// 		GUI_FrameFlush();
+// 		sleep(1);
+// 	}
+// return 0;
+// }
+
+// void show_error(int err, int add) {
+// 	//const gchar* errmsg;
+// 	//errmsg = g_strerror(errno);
+// 	printf("\nERROR: %i, %i\n\n", err, add);
+// 	//printf("\nERROR\n");
+// }
+
+// void show_usage(char *progname) {
+// 	printf("\nUsage:\n%s <I2C bus device node >\n", progname);
+// }
+
+// char* GetLocalIp()  
+// {        
+//     int MAXINTERFACES=16;  
+//     char *ip = NULL;  
+//     int fd, intrface, retn = 0;    
+//     struct ifreq buf[MAXINTERFACES];    
+//     struct ifconf ifc;    
+//  	struct sockaddr_in remote_addr;
+//     if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) >= 0)    
+//     {    
+//         ifc.ifc_len = sizeof(buf);    
+//         ifc.ifc_buf = (caddr_t)buf;    
+//         if (!ioctl(fd, SIOCGIFCONF, (char *)&ifc))    
+//         {    
+//             intrface = ifc.ifc_len / sizeof(struct ifreq);    
+ 
+//             while (intrface-- > 0)    
+//             {    
+//                 if (!(ioctl (fd, SIOCGIFADDR, (char *) &buf[intrface])))    
+//                 {    
+//                     ip= (char*)(inet_ntoa(((struct sockaddr_in*)(&buf[intrface].ifr_addr))->sin_addr));    
+//                     break;  
+//                 }                        
+//             }  
+//         }    
+//         close (fd);    
+//         return ip;    
+//     }  
+// } 
+
+// int main(int argc, char **argv) {
+// 	int e;
+// 	char filename[32];
+// 	struct display_info disp;
+// 	strcpy(IP,GetLocalIp());
+// 	printf("IP:%s\r\n",IP);
+// 	// if (argc < 2) {
+// 	// 	show_usage(argv[0]);
+		
+// 	// 	return -1;
+// 	// }
+// 	memset(&disp, 0, sizeof(disp));
+// 	//sprintf(filename, "%s", argv[1]);
+// 	sprintf(filename, "%s", "/dev/i2c-3");
+// 	disp.address = OLED_I2C_ADDR;
+// 	disp.font = font2;
+
+// 	e = oled_open(&disp, filename);
+
+// 	if (e < 0) {
+// 		show_error(1, e);
+// 	} else {
+// 		e = oled_init(&disp);
+// 		pthread_create(&tid,NULL,cpu_getinfo_thread,NULL);
+// 	if (e < 0) {
+// 		show_error(2, e);
+// 	} else {
+// 		printf("---------start--------\n");
+// 		if (oled_demo(&disp) < 0)
+// 			show_error(3, 777);
+// 			printf("----------end---------\n");
+// 		}
+// 	}
+
+// 	return 0;
+// }
