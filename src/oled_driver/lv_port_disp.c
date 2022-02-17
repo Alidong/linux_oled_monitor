@@ -27,8 +27,8 @@
 static void disp_init(void);
 
 static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p);
-//static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
-//        const lv_area_t * fill_area, lv_color_t color);
+// static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
+//         const lv_area_t * fill_area, lv_color_t color);
 
 /**********************
  *  STATIC VARIABLES
@@ -116,7 +116,7 @@ void lv_port_disp_init(void)
     /* Fill a memory array with a color if you have GPU.
      * Note that, in lv_conf.h you can enable GPUs that has built-in support in LVGL.
      * But if you have a different GPU you can use with this callback.*/
-    //disp_drv.gpu_fill_cb = gpu_fill;
+    // disp_drv.gpu_fill_cb = gpu_fill;
 
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);
@@ -133,13 +133,19 @@ static void disp_init(void)
     int e;
     char filename[32];
     memset(&disp, 0, sizeof(disp));
-    //sprintf(filename, "%s", argv[1]);
+    // sprintf(filename, "%s", argv[1]);
     sprintf(filename, "%s", "/dev/i2c-3");
     disp.address = OLED_I2C_ADDR;
     e = oled_open(&disp, filename);
-    printf("E=%d\r\n", e);
+    if (e != 0)
+    {
+        printf("E=%d\r\n", e);
+    }
     e = oled_init(&disp);
-    printf("E=%d\r\n", e);
+    if (e != 0)
+    {
+        printf("E=%d\r\n", e);
+    }
 }
 
 /*Flush the content of the internal buffer the specific area on the display
@@ -174,20 +180,20 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 /*OPTIONAL: GPU INTERFACE*/
 
 /*If your MCU has hardware accelerator (GPU) then you can use it to fill a memory with a color*/
-//static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
-//                    const lv_area_t * fill_area, lv_color_t color)
+// static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
+//                     const lv_area_t * fill_area, lv_color_t color)
 //{
-//    /*It's an example code which should be done by your GPU*/
-//    int32_t x, y;
-//    dest_buf += dest_width * fill_area->y1; /*Go to the first line*/
+//     /*It's an example code which should be done by your GPU*/
+//     int32_t x, y;
+//     dest_buf += dest_width * fill_area->y1; /*Go to the first line*/
 //
-//    for(y = fill_area->y1; y <= fill_area->y2; y++) {
-//        for(x = fill_area->x1; x <= fill_area->x2; x++) {
-//            dest_buf[x] = color;
-//        }
-//        dest_buf+=dest_width;    /*Go to the next line*/
-//    }
-//}
+//     for(y = fill_area->y1; y <= fill_area->y2; y++) {
+//         for(x = fill_area->x1; x <= fill_area->x2; x++) {
+//             dest_buf[x] = color;
+//         }
+//         dest_buf+=dest_width;    /*Go to the next line*/
+//     }
+// }
 
 #else /*Enable this file at the top*/
 

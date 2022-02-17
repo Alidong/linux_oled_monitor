@@ -28,97 +28,102 @@
 //#include "font.h"
 //#include <wiringPiI2C.h>
 
-static int i2c_write(int fd,const uint8_t* buf,uint16_t size)
+static int i2c_write(int fd, const uint8_t *buf, uint16_t size)
 {
-   int retries;
-   //设置地址长度：0为7位地址
-   ioctl(fd,I2C_TENBIT,0);
-   //设置从机地址
-   if (ioctl(fd,I2C_SLAVE,OLED_I2C_ADDR) < 0)
-   {
-      printf("fail to set i2c device slave address!\n");
-      close(fd);
-      return -1;
-   }
-   //设置收不到ACK时的重试次数
-   ioctl(fd,I2C_RETRIES,5);
+	int retries;
+	//设置地址长度：0为7位地址
+	ioctl(fd, I2C_TENBIT, 0);
+	//设置从机地址
+	if (ioctl(fd, I2C_SLAVE, OLED_I2C_ADDR) < 0)
+	{
+		printf(" i2c_write fail to set i2c device slave address!\n");
+		close(fd);
+		return -1;
+	}
+	//设置收不到ACK时的重试次数
+	ioctl(fd, I2C_RETRIES, 5);
 
-   if (write(fd, buf, size) == size)
-   {
-      return 0;
-   }
-   else
-   {
+	if (write(fd, buf, size) == size)
+	{
+		return 0;
+	}
+	else
+	{
 		printf("fail to write i2c slave device  !\n");
-      return -1;
-   }
-
+		return -1;
+	}
 }
 
-static int i2c_read(int fd, uint8_t addr,uint8_t reg,uint8_t * val)
+static int i2c_read(int fd, uint8_t addr, uint8_t reg, uint8_t *val)
 {
-   int retries;
-   //设置地址长度：0为7位地址
-   ioctl(fd,I2C_TENBIT,0);
-   //设置从机地址
-   if (ioctl(fd,I2C_SLAVE,addr) < 0)
-   {
-      printf("fail to set i2c device slave address!\n");
-      close(fd);
-      return -1;
-   }
-   //设置收不到ACK时的重试次数
-   ioctl(fd,I2C_RETRIES,5);
+	int retries;
+	//设置地址长度：0为7位地址
+	ioctl(fd, I2C_TENBIT, 0);
+	//设置从机地址
+	if (ioctl(fd, I2C_SLAVE, addr) < 0)
+	{
+		printf("i2c_read fail to set i2c device slave address!\n");
+		close(fd);
+		return -1;
+	}
+	//设置收不到ACK时的重试次数
+	ioctl(fd, I2C_RETRIES, 5);
 
-   if (write(fd, &reg, 1) == 1)
-   {
-      if (read(fd, val, 1) == 1)
-      {
-            return 0;
-      }
-   }
-   else
-   {
-      return -1;
-   }
+	if (write(fd, &reg, 1) == 1)
+	{
+		if (read(fd, val, 1) == 1)
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		return -1;
+	}
 }
 static uint8_t textdatum = TL_DATUM;
 static struct display_info *nativdisp;
-int oled_close(struct display_info *disp) {
+int oled_close(struct display_info *disp)
+{
 	if (close(disp->file) < 0)
 		return -1;
 
 	return 0;
 }
 
-void cleanup(int status, void *disp) {
+void cleanup(int status, void *disp)
+{
 	oled_close((struct display_info *)disp);
 }
 
-int oled_open(struct display_info *disp, char *filename) {
+int oled_open(struct display_info *disp, char *filename)
+{
 
-	//disp->file = wiringPiI2CSetupInterface (filename, disp->address);
-	disp->file=open(filename,O_RDWR );
+	// disp->file = wiringPiI2CSetupInterface (filename, disp->address);
+	disp->file = open(filename, O_RDWR);
 	if (disp->file < 0)
 		return -1;
 	return 0;
 }
 
 // write commands and data to /dev/i2c*
-int oled_send(struct display_info *disp, struct sized_array *payload) {
-	//if (write(disp->file, payload->array, payload->size) != payload->size)
-	if (i2c_write(disp->file, payload->array, payload->size) !=0)
+int oled_send(struct display_info *disp, struct sized_array *payload)
+{
+	// if (write(disp->file, payload->array, payload->size) != payload->size)
+	if (i2c_write(disp->file, payload->array, payload->size) != 0)
 		return -1;
 	return 0;
 }
-static int oled_singal_cmd(struct display_info *disp,uint8_t cmd){
-	uint8_t cmd_b[2]={0,0};
-	cmd_b[1]=cmd;
-	if (write(disp->file, cmd_b, 2) !=2)
+static int oled_singal_cmd(struct display_info *disp, uint8_t cmd)
+{
+	uint8_t cmd_b[2] = {0, 0};
+	cmd_b[1] = cmd;
+	if (write(disp->file, cmd_b, 2) != 2)
 		return -1;
 	return 0;
 }
-int oled_init(struct display_info *disp) {
+int oled_init(struct display_info *disp)
+{
 	struct sched_param sch;
 	int status = 0;
 	struct sized_array payload;
@@ -139,39 +144,42 @@ int oled_init(struct display_info *disp) {
 	status = oled_send(disp, &payload);
 	if (status < 0)
 		return 666;
-	nativdisp=disp;
+	nativdisp = disp;
 	memset(disp->buffer, 0, sizeof(disp->buffer));
 	oled_clear(disp);
 	return 0;
 }
 
 // send buffer to oled (show)
-int oled_send_buffer(struct display_info *disp) {
+int oled_send_buffer(struct display_info *disp)
+{
 	struct sized_array payload;
 	uint8_t packet[129];
 	int index;
 
-	for (index = 0; index < (Ver_size/8); index++) {	
-		oled_singal_cmd(disp,0xb0 + index); //page0-page1
-     	oled_singal_cmd(disp,0x00);     //low column start address
-        oled_singal_cmd(disp,0x10);     //high column start address
+	for (index = 0; index < (Ver_size / 8); index++)
+	{
+		oled_singal_cmd(disp, 0xb0 + index); // page0-page1
+		oled_singal_cmd(disp, 0x00);		 // low column start address
+		oled_singal_cmd(disp, 0x10);		 // high column start address
 		packet[0] = OLED_CTRL_BYTE_DATA_STREAM;
 		memcpy(packet + 1, disp->buffer[index], 128);
 		payload.size = 129;
 		payload.array = packet;
 		oled_send(disp, &payload);
 	}
-	//memset(disp->buffer,0,sizeof(disp->buffer));
+	// memset(disp->buffer,0,sizeof(disp->buffer));
 	return 0;
 }
 
 // clear screen
-void oled_clear(struct display_info *disp) {
+void oled_clear(struct display_info *disp)
+{
 	memset(disp->buffer, 0, sizeof(disp->buffer));
 	oled_send_buffer(disp);
 }
 
-// // put string to one of the 8 pages (128x8 px) 
+// // put string to one of the 8 pages (128x8 px)
 // void oled_putstr(struct display_info *disp, uint8_t line, uint8_t *str) {
 // 	uint8_t a;
 // 	int slen = strlen(str);
@@ -189,14 +197,16 @@ void oled_clear(struct display_info *disp) {
 // }
 
 // put one pixel at xy, on=1|0 (turn on|off pixel)
-void oled_putpixel(struct display_info *disp, uint8_t x, uint8_t y, uint8_t on) {
+void oled_putpixel(struct display_info *disp, uint8_t x, uint8_t y, uint8_t on)
+{
 	uint8_t pageId = y / 8;
 	uint8_t bitOffset = y % 8;
-	if (x < 128-1) {
+	if (x < 128 - 1)
+	{
 		if (on != 0)
-			disp->buffer[pageId][x] |= (1<<bitOffset);
+			disp->buffer[pageId][x] |= (1 << bitOffset);
 		else
-			disp->buffer[pageId][x] &= ~(1<<bitOffset);
+			disp->buffer[pageId][x] &= ~(1 << bitOffset);
 	}
 }
 

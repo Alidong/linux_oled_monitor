@@ -22,6 +22,7 @@ static void timer_cb(lv_timer_t *timer)
 {
     /*Use the user_data*/
     getCpu_data(&cpu_load, &cpu_temp);
+    // printf("%.1f\r\n",cpu_temp);
     getMem_data(&mem_data);
     get_disk_occupy(&fdisk_data);
     char ip_str1[20], ip_str2[20];
@@ -152,7 +153,7 @@ static void onRelease_subMenu(Page_maneger *page)
 }
 static void submenu_hide(Page_maneger *page, bool en)
 {
-    //lv_event_send(page->Page_obj,lv_event_hi);
+    // lv_event_send(page->Page_obj,lv_event_hi);
     if (en)
     {
         lv_obj_add_flag(page->Page_obj, LV_OBJ_FLAG_HIDDEN);
@@ -161,7 +162,7 @@ static void submenu_hide(Page_maneger *page, bool en)
     {
         lv_obj_clear_flag(page->Page_obj, LV_OBJ_FLAG_HIDDEN);
     }
-    //lv_obj_set_hidden(, en);
+    // lv_obj_set_hidden(, en);
 }
 static void onAppearing(Page_maneger *page)
 {
