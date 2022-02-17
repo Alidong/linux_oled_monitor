@@ -109,7 +109,6 @@ void lv_port_disp_init(void)
 
     /*Set a display buffer*/
     disp_drv.draw_buf = &draw_buf_dsc_3;
-
     /*Required for Example 3)*/
     disp_drv.full_refresh = 1;
 
@@ -118,6 +117,9 @@ void lv_port_disp_init(void)
      * But if you have a different GPU you can use with this callback.*/
     // disp_drv.gpu_fill_cb = gpu_fill;
 
+    /*rotation*/
+    // disp_drv.sw_rotate = 1; // add for rotation
+    // disp_drv.rotated = LV_DISP_ROT_180;
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);
     //
@@ -147,7 +149,7 @@ static void disp_init(void)
         printf("E=%d\r\n", e);
     }
 }
-
+#define DISP_ROT_180
 /*Flush the content of the internal buffer the specific area on the display
  *You can use DMA or any hardware acceleration to do this operation in the background but
  *'lv_disp_flush_ready()' has to be called when finished.*/
@@ -159,6 +161,8 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
     // gettimeofday (&tv1 , &tz);
     int32_t x;
     int32_t y;
+/*rotation*/
+#ifndef DISP_ROT_180
     for (y = area->y1; y <= area->y2; y++)
     {
         for (x = area->x1; x <= area->x2; x++)
@@ -169,6 +173,18 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
             color_p++;
         }
     }
+#else
+    for (y = area->y2; y >= area->y1; y--)
+    {
+        for (x = area->x2; x >= area->x1; x--)
+        {
+            /*Put a pixel to the display. For example:*/
+            /*put_px(x, y, *color_p)*/
+            oled_putpixel(&disp, x, y, (uint8_t)(color_p->full));
+            color_p++;
+        }
+    }
+#endif
     oled_send_buffer(&disp);
     /*IMPORTANT!!!
      *Inform the graphics library that you are ready with the flushing*/
